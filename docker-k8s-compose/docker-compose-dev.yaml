@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  demo-back:
+    build: ../../docker-k8s-back
+    container_name: demo-back
+    ports:
+      - 8080:8080
+  demo-front:
+    build: 
+      context: ../../docker-k8s-front
+      dockerfile: Dockerfile-dev
+    container_name: demo-front
+    ports:
+      - 4200:80
+    links:
+      - demo-back

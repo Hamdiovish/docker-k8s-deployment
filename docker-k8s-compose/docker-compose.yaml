@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  demo-back:
+    image: 'fsouayah/demo-backend:1.0.0'
+    container_name: demo-back
+    ports:
+      - 8080:8080
+  demo-front:
+    image: 'fsouayah/demo-frontend:1.1.0-dev'
+    container_name: demo-front
+    ports:
+      - 4200:80
+    links:
+      - demo-back
