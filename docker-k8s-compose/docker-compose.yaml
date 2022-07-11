@@ -1,14 +1,27 @@
 version: '3.9'
 services:
+  demo-postgres:
+    image: 'postgres'
+    container_name: demo-postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=docker-k8s-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
   demo-back:
-    image: 'fsouayah/demo-backend:1.0.0'
+    image: 'fsouayah/demo-backend:1.1.0'
     container_name: demo-back
     ports:
       - 8080:8080
+    environment:
+      - DB_SERVER=demo-postgres
+    depends_on:
+      - demo-postgres
   demo-front:
     image: 'fsouayah/demo-frontend:1.1.0-dev'
     container_name: demo-front
     ports:
       - 4200:80
-    links:
+    depends_on:
       - demo-back
