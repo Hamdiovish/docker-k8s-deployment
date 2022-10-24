@@ -1,0 +1,27 @@
+version: "3.5"
+
+services:
+  zookeeper:
+    image: ghcr.io/dapr/3rdparty/zookeeper:latest
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: ghcr.io/dapr/3rdparty/kafka:latest
+    ports:
+      - "9092:9092"
+      - "3032:8080"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "sample:1:1"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:0.3.3
+    container_name: kafka-ui
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "mobelite.fr"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "localhost:9092"
+      KAFKA_CLUSTERS_0_ZOOKEEPER: "http://zookeeper:2181"
+      KAFKA_CLUSTERS_0_READONLY: "false"
+    network_mode: "service:kafka"

@@ -1,0 +1,42 @@
+version: "3.5"
+
+services:
+  dapr-placement:
+    container_name: dapr-placement
+    image: "daprio/dapr"
+    command: ["./placement", "-port", "50006"]
+
+  demo-postgres:
+    container_name: demo-postgres
+    image: 'postgres'
+    environment:
+      - POSTGRES_DB=docker-k8s-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  demo-back:
+    container_name: demo-back
+    build: ../../../docker-k8s-back
+    environment:
+      - DB_SERVER=demo-postgres
+
+  demo-back-sidecar:
+    container_name: demo-back-sidecar
+    image: "daprio/daprd:edge"
+    command: [
+        "./daprd",
+        "-app-id", "back",
+        "-app-port", "8080",  
+        "-dapr-http-port", "3500",
+        "-components-path", "/components",
+        "-placement-host-address", "dapr-placement:50006",
+        "-log-level", "debug"
+      ]
+    volumes:
+      - "./../res/components/:/components"
+
+  demo-front:
+    container_name: demo-front
+    build: 
+      context: ../../../docker-k8s-front
+      dockerfile: Dockerfile-dev
