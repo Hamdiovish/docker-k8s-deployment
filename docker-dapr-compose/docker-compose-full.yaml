@@ -27,6 +27,40 @@ services:
     ports:
       - "8082:8080"
 
+  dapr-placement:
+    extends:
+      file: dapr/docker-compose.yaml
+      service: dapr-placement
+    depends_on:
+      - kafka
+
+  demo-back:
+    extends:
+      file: dapr/docker-compose.yaml
+      service: demo-back
+    depends_on:
+      - dapr-placement
+    ports:
+      - "8081:8080"
+      - "3501:3500"
+
+  demo-back-sidecar:
+    extends:
+      file: dapr/docker-compose.yaml
+      service: demo-back-sidecar
+    depends_on:
+      - demo-back
+    network_mode: "service:demo-back"
+
+  demo-front:
+    extends:
+      file: dapr/docker-compose.yaml
+      service: demo-front
+    depends_on:
+      - dapr-placement
+    ports:
+      - "4200:80"
+
   demo-postgres:
     extends:
       file: dapr/docker-compose.yaml
@@ -34,7 +68,7 @@ services:
     depends_on:
       - dapr-placement
     ports:
-      - "5432:5432"
+      - "5431:5432"
 
 volumes:
     data:

@@ -10,6 +10,8 @@
 
 > dapr init
 
+> add "res/components/kafka-bindings.yaml" under ~/.dapr/components
+
 > dapr run --app-id back --dapr-http-port 3500 --app-port 8080 
 
 > curl -X POST http://localhost:3500/v1.0/bindings/sample \
